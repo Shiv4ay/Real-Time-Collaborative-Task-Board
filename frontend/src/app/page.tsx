@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Board from '@/components/Board';
 import { initSocket, disconnectSocket } from '@/services/socket';
+import OfflineSyncManager from '@/components/OfflineSyncManager';
+import CreateTaskForm from '@/components/CreateTaskForm';
 
 export default function Home() {
   const user = useAuthStore((state) => state.user);
@@ -42,6 +44,8 @@ export default function Home() {
       </header>
       <div className="flex-1 overflow-hidden">
         <Board />
+        <OfflineSyncManager />
+        <CreateTaskForm />
       </div>
     </main>
   );

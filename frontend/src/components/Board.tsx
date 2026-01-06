@@ -4,21 +4,17 @@ import { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { TaskStatus, useTaskStore } from '@/store/taskStore';
 import Column from './Column';
-import { initSocket, fetchTasks, updateTask } from '@/services/api';
+import { fetchTasks, updateTask } from '@/services/api';
+import { useQueueStore } from '@/store/queueStore';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
 export default function Board() {
     const { tasks, setTasks, moveTask } = useTaskStore();
+    const { addToQueue } = useQueueStore(); // Import this
+    const isOnline = useOnlineStatus(); // Import this
     const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-        // Initial fetch
-        fetchTasks({ limit: 100 }).then((res) => setTasks(res.data));
-
-        // Initialize socket
-        // const socket = initSocket();
-        // return () => disconnectSocket(); // Handled in layout or top level usually
-    }, [setTasks]);
+    // ... (useEffect remains same)
 
     const onDragEnd = async (result: DropResult) => {
         const { destination, source, draggableId } = result;
@@ -37,12 +33,23 @@ export default function Board() {
         // Optimistic update
         moveTask(draggableId, newStatus);
 
+        if (!isOnline) {
+            // Queue the action
+            addToQueue({
+                id: draggableId,
+                type: 'UPDATE',
+                payload: { status: newStatus },
+                timestamp: Date.now(),
+            });
+            return;
+        }
+
         // API Call
         try {
             await updateTask(draggableId, { status: newStatus });
         } catch (error) {
             console.error('Failed to update task:', error);
-            // Rollback logic would go here (fetch tasks again or revert)
+            // Rollback
             fetchTasks({ limit: 100 }).then(res => setTasks(res.data));
         }
     };
