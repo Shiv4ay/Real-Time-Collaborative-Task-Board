@@ -1,4 +1,5 @@
 import { prisma } from '../../plugins/prisma';
+import { redis } from '../../plugins/redis';
 import { LoginInput } from './auth.schemas';
 import { FastifyInstance } from 'fastify';
 
@@ -24,6 +25,13 @@ export async function loginUser(app: FastifyInstance, input: LoginInput) {
     }
 
     const token = app.jwt.sign({ id: user.id, email: user.email });
+
+    // Store session metadata in Redis
+    await redis.set(`session:${user.id}`, JSON.stringify({
+        email: user.email,
+        loginAt: new Date().toISOString(),
+        ip: 'unknown' // In a real app, retrieve from request
+    }), 'EX', 86400); // Expire in 24 hours
 
     return { token, user: { id: user.id, email: user.email } };
 }

@@ -14,6 +14,8 @@ export const taskQuerySchema = z.object({
     limit: z.string().optional().transform(val => val ? parseInt(val) : 10),
     status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
     search: z.string().optional(),
+    priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+    sort: z.enum(['created_desc', 'created_asc']).optional(),
 });
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;

@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import customJwt from '@fastify/jwt';
 import websocket from '@fastify/websocket';
@@ -8,14 +8,35 @@ import { authRoutes } from './modules/auth/auth.routes';
 import { taskRoutes } from './modules/tasks/task.routes';
 import { prisma } from './plugins/prisma';
 import { redis } from './plugins/redis';
+import swaggerPlugin from './plugins/swagger';
 
 dotenv.config();
 
-const app = fastify({ logger: true });
+const app = Fastify({ logger: true });
 
 // Register Plugins
+app.register(swaggerPlugin);
 app.register(cors, {
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: (origin, cb) => {
+        // Allow no origin (like mobile apps or curl requests)
+        if (!origin) return cb(null, true);
+
+        // Allow localhost and local network IPs
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://127.0.0.1:3000'
+        ];
+
+        // Dynamic check for local network IPs or adding simple regex
+        if (allowedOrigins.includes(origin) || origin.startsWith('http://192.168.')) {
+            cb(null, true);
+            return;
+        }
+
+        cb(new Error('Not allowed by CORS'), false);
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
 });
 
 app.register(customJwt, {
@@ -33,8 +54,19 @@ app.decorate('authenticate', async (request: any, reply: any) => {
 // Setup Socket.io
 const io = new Server(app.server, {
     cors: {
-        origin: process.env.CORS_ORIGIN || '*',
+        origin: (origin, callback) => {
+            const allowedOrigins = [
+                'http://localhost:3000',
+                'http://127.0.0.1:3000'
+            ];
+            if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://192.168.')) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'), false);
+            }
+        },
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true,
     },
 });
 

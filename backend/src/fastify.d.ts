@@ -2,6 +2,10 @@
 import '@fastify/jwt';
 import { Server } from 'socket.io';
 
+// This usage of 'declare module' is correct for type augmentation if inside a .d.ts file included in compilation.
+// However, adding a top-level export makes it a module, allowing augmentation of external modules.
+export { };
+
 declare module 'fastify' {
     interface FastifyInstance {
         io: Server;

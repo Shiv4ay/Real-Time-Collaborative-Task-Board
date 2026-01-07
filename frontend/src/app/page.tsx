@@ -29,8 +29,8 @@ export default function Home() {
   if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50">
-      <header className="flex items-center justify-between bg-white px-8 py-4 shadow-sm">
+    <main className="flex min-h-screen flex-col bg-gray-50 dark:bg-black transition-colors duration-200">
+      <header className="flex items-center justify-between bg-white dark:bg-zinc-900 border-b dark:border-zinc-800 px-8 py-4 shadow-sm text-gray-900 dark:text-gray-100 transition-colors duration-200">
         <h1 className="text-xl font-bold">Task Board</h1>
         <div className="flex items-center gap-4">
           <span>Hello, {user?.email}</span>
@@ -47,6 +47,9 @@ export default function Home() {
         <OfflineSyncManager />
         <CreateTaskForm />
       </div>
+      <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-zinc-900 border-t dark:border-zinc-800 transition-colors duration-200">
+        <p>Designed & Built by <span className="font-semibold text-gray-900 dark:text-gray-200">Siba Sundar Guntha</span></p>
+      </footer>
     </main>
   );
 }

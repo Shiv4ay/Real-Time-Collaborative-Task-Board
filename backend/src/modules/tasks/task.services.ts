@@ -8,18 +8,19 @@ const CACHE_KEY = 'tasks:all';
 export async function getTasks(query: TaskQueryInput) {
     // Simple caching strategy: Cache only the first page without filters
     // For production, you'd cache based on query params hash
-    const isCacheable = query.page === 1 && !query.status && !query.search;
+    const isCacheable = query.page === 1 && !query.status && !query.search && !query.priority && !query.sort;
 
     if (isCacheable) {
         const cached = await redis.get(CACHE_KEY);
         if (cached) return JSON.parse(cached);
     }
 
-    const { page, limit, status, search } = query;
+    const { page, limit, status, search, priority, sort } = query;
     const skip = (page - 1) * limit;
 
     const where: any = {};
     if (status) where.status = status;
+    if (priority) where.priority = priority;
     if (search) {
         where.OR = [
             { title: { contains: search, mode: 'insensitive' } },
@@ -27,12 +28,19 @@ export async function getTasks(query: TaskQueryInput) {
         ];
     }
 
+    const orderBy: any = {};
+    if (sort === 'created_asc') {
+        orderBy.createdAt = 'asc';
+    } else {
+        orderBy.createdAt = 'desc';
+    }
+
     const [data, total] = await Promise.all([
         prisma.task.findMany({
             where,
             skip,
             take: limit,
-            orderBy: { createdAt: 'desc' },
+            orderBy,
         }),
         prisma.task.count({ where }),
     ]);

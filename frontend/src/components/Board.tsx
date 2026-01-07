@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { TaskStatus, useTaskStore } from '@/store/taskStore';
+import BoardControls from './BoardControls';
+import { TaskPriority } from '@/store/taskStore';
 import Column from './Column';
 import { fetchTasks, updateTask } from '@/services/api';
 import { useQueueStore } from '@/store/queueStore';
@@ -10,11 +12,29 @@ import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
 export default function Board() {
     const { tasks, setTasks, moveTask } = useTaskStore();
-    const { addToQueue } = useQueueStore(); // Import this
-    const isOnline = useOnlineStatus(); // Import this
+    const { addToQueue } = useQueueStore();
+    const isOnline = useOnlineStatus();
     const [mounted, setMounted] = useState(false);
 
-    // ... (useEffect remains same)
+    // Filter State
+    const [search, setSearch] = useState('');
+    const [priority, setPriority] = useState<TaskPriority | 'ALL'>('ALL');
+    const [sortBy, setSortBy] = useState<'created_desc' | 'created_asc'>('created_desc');
+
+    useEffect(() => {
+        setMounted(true);
+        const params: any = { limit: 100 };
+        if (search) params.search = search;
+        if (priority !== 'ALL') params.priority = priority;
+        if (sortBy) params.sort = sortBy;
+
+        // Debounce search could be good, but for now direct
+        const timeoutId = setTimeout(() => {
+            fetchTasks(params).then((res) => setTasks(res.data));
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [setTasks, search, priority, sortBy]);
 
     const onDragEnd = async (result: DropResult) => {
         const { destination, source, draggableId } = result;
@@ -46,7 +66,9 @@ export default function Board() {
 
         // API Call
         try {
+            console.log('Sending update to backend:', draggableId, newStatus);
             await updateTask(draggableId, { status: newStatus });
+            console.log('Backend update successful');
         } catch (error) {
             console.error('Failed to update task:', error);
             // Rollback
@@ -63,17 +85,27 @@ export default function Board() {
     ];
 
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <div className="flex h-full gap-6 overflow-x-auto p-8">
-                {columns.map((col) => (
-                    <Column
-                        key={col.id}
-                        title={col.title}
-                        status={col.id}
-                        tasks={tasks.filter((t) => t.status === col.id)}
-                    />
-                ))}
-            </div>
-        </DragDropContext>
+        <div className="flex flex-col h-full">
+            <BoardControls
+                search={search}
+                setSearch={setSearch}
+                priority={priority}
+                setPriority={setPriority}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+            />
+            <DragDropContext onDragEnd={onDragEnd}>
+                <div className="flex h-full gap-6 overflow-x-auto p-8">
+                    {columns.map((col) => (
+                        <Column
+                            key={col.id}
+                            title={col.title}
+                            status={col.id}
+                            tasks={tasks.filter((t) => t.status === col.id)}
+                        />
+                    ))}
+                </div>
+            </DragDropContext>
+        </div>
     );
 }

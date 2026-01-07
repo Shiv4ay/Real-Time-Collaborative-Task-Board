@@ -43,34 +43,34 @@ export default function CreateTaskForm() {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div className="w-full max-w-md rounded-lg bg-white dark:bg-zinc-800 p-6 shadow-xl text-gray-900 dark:text-gray-100 border dark:border-zinc-700">
                 <h2 className="mb-4 text-xl font-bold">Create New Task</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Title</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-zinc-600 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white dark:bg-zinc-900"
                             required
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Description</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-zinc-600 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white dark:bg-zinc-900"
                             rows={3}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Priority</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Priority</label>
                         <select
                             value={priority}
                             onChange={(e) => setPriority(e.target.value as any)}
-                            className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-zinc-600 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white dark:bg-zinc-900"
                         >
                             <option value="LOW">Low</option>
                             <option value="MEDIUM">Medium</option>
@@ -81,7 +81,7 @@ export default function CreateTaskForm() {
                         <button
                             type="button"
                             onClick={() => setIsOpen(false)}
-                            className="rounded-md px-4 py-2 text-gray-600 hover:bg-gray-100"
+                            className="rounded-md px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700"
                         >
                             Cancel
                         </button>
