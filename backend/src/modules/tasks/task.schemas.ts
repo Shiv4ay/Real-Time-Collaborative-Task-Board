@@ -10,8 +10,8 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = createTaskSchema.partial();
 
 export const taskQuerySchema = z.object({
-    page: z.string().optional().transform(val => val ? parseInt(val) : 1),
-    limit: z.string().optional().transform(val => val ? parseInt(val) : 10),
+    page: z.coerce.number().optional().default(1),
+    limit: z.coerce.number().optional().default(10),
     status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
     search: z.string().optional(),
     priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),

@@ -28,9 +28,18 @@ export default function Board() {
         if (priority !== 'ALL') params.priority = priority;
         if (sortBy) params.sort = sortBy;
 
-        // Debounce search could be good, but for now direct
+        console.log('Fetching tasks with params:', params);
+
         const timeoutId = setTimeout(() => {
-            fetchTasks(params).then((res) => setTasks(res.data));
+            fetchTasks(params)
+                .then((res) => {
+                    console.log('Fetched tasks:', res.data.length);
+                    setTasks(res.data);
+                })
+                .catch((err) => {
+                    console.error('Fetch tasks failed:', err);
+                    // Optional: Show a UI error
+                });
         }, 300);
 
         return () => clearTimeout(timeoutId);

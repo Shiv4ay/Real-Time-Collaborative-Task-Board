@@ -70,7 +70,7 @@ export default function CreateTaskForm() {
                         <select
                             value={priority}
                             onChange={(e) => setPriority(e.target.value as any)}
-                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-zinc-600 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white dark:bg-zinc-900"
+                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-zinc-600 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white dark:bg-zinc-900 appearance-auto cursor-pointer"
                         >
                             <option value="LOW">Low</option>
                             <option value="MEDIUM">Medium</option>

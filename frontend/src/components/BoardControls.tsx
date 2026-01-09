@@ -20,7 +20,7 @@ export default function BoardControls({
     setSortBy,
 }: BoardControlsProps) {
     return (
-        <div className="flex flex-wrap gap-4 p-8 pb-0 items-center">
+        <div className="flex flex-wrap gap-4 p-8 pb-0 items-center relative z-10">
             <div className="flex-1 min-w-[200px]">
                 <input
                     type="text"
@@ -35,7 +35,7 @@ export default function BoardControls({
                 <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as any)}
-                    className="rounded-md border border-gray-300 dark:border-zinc-700 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-zinc-800"
+                    className="rounded-md border border-gray-300 dark:border-zinc-700 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-zinc-800 cursor-pointer appearance-auto"
                 >
                     <option value="ALL">All Priorities</option>
                     <option value="LOW">Low</option>
@@ -46,7 +46,7 @@ export default function BoardControls({
                 <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="rounded-md border border-gray-300 dark:border-zinc-700 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-zinc-800"
+                    className="rounded-md border border-gray-300 dark:border-zinc-700 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-zinc-800 cursor-pointer appearance-auto"
                 >
                     <option value="created_desc">Newest First</option>
                     <option value="created_asc">Oldest First</option>

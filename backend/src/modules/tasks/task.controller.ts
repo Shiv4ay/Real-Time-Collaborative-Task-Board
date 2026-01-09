@@ -6,7 +6,9 @@ export async function getTasksHandler(
     request: FastifyRequest<{ Querystring: unknown }>,
     reply: FastifyReply
 ) {
+    console.log('GET /tasks Query:', request.query);
     const query = taskQuerySchema.parse(request.query);
+    console.log('Parsed Query:', query);
     const tasks = await getTasks(query);
     return reply.send(tasks);
 }
